@@ -12,6 +12,9 @@ REQUISITOS:
         - accounts-service: 5001
         - customers-service: 5002
 
+Repositorio GitHub (Descargar como Zip):
+	https://github.com/ivankimr/devsu-test
+
 Comando para levantar los contenedores:
     En devsu-test ejecutar: docker-compose up --build
 
