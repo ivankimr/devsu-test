@@ -1,0 +1,66 @@
+version: "3.9"
+services:
+  rabbit:
+    image: rabbitmq:3.13-management
+    container_name: rabbit
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # UI
+    environment:
+      RABBITMQ_DEFAULT_USER: devsu
+      RABBITMQ_DEFAULT_PASS: devsu
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      
+  db:
+    image: postgres:17
+    container_name: devsu-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1149pGdo
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      
+  customers-service:
+    build:
+      context: ./customers-service
+      dockerfile: dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/devsu_customer?currentSchema=devsu
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1149pGdo
+      
+      SPRING_RABBITMQ_HOST: rabbit
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: devsu
+      SPRING_RABBITMQ_PASSWORD: devsu    
+    depends_on:
+      - db
+      - rabbit
+      
+  accounts-service:
+    build:
+      context: ./accounts-service
+      dockerfile: dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/devsu_account?currentSchema=devsu
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1149pGdo
+      
+      SPRING_RABBITMQ_HOST: rabbit
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: devsu
+      SPRING_RABBITMQ_PASSWORD: devsu
+    depends_on:
+      - db
+      - rabbit
+      
+volumes:
+  rabbitmq-data: {}

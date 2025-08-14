@@ -1,0 +1,21 @@
+server:
+  port: 5002
+
+spring:
+  datasource:
+    url: jdbc:postgresql://51.81.220.111:5786/devsu_customer?currentSchema=devsu
+    username: postgres
+    password: 1149pGdo
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.default_schema: devsu
+  jackson:
+    time-zone: America/Guayaquil
+    serialization:
+      write-dates-as-timestamps: false
+  rabbitmq:
+    host: localhost
+    port: 5672
